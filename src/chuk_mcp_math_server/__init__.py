@@ -14,25 +14,33 @@ __author__ = "Chuk MCP Team"
 __description__ = "Configurable mathematical computation server for MCP protocol"
 
 # Main exports
-from .math_server import (
-    ConfigurableMCPMathServer,
-    ServerConfig,
-    FunctionFilter,
-    main
-)
-
-# Configuration helpers
-from .math_server import load_configuration
+from .config import ServerConfig, load_configuration_from_sources
+from .math_config import MathServerConfig, load_math_configuration_from_sources
+from .function_filter import FunctionFilter
+from .base_server import BaseMCPServer
+from .math_server import ConfigurableMCPMathServer, create_math_server
+from .cli import main
 
 # Version utilities
 from ._version import get_version, get_version_info, print_version_info
 
 __all__ = [
+    # Core classes
     "ConfigurableMCPMathServer",
+    "BaseMCPServer",
     "ServerConfig", 
+    "MathServerConfig",
     "FunctionFilter",
+    
+    # Factory functions
+    "create_math_server",
+    "load_configuration_from_sources",
+    "load_math_configuration_from_sources",
+    
+    # CLI
     "main",
-    "load_configuration",
+    
+    # Version utilities
     "get_version",
     "get_version_info", 
     "print_version_info",
@@ -52,15 +60,13 @@ PACKAGE_INFO = {
     "supported_transports": ["stdio", "http"],
     "default_transport": "stdio",
     "required_dependencies": [
-        "chuk-mcp>=0.5",
-        "chuk-mcp-math>=0.1.0",
-        "fastapi>=0.116.1",
-        "httpx>=0.28.1",
-        "pyyaml>=6.0.2",
-        "uvicorn>=0.35.0"
+        "chuk-mcp",
+        "chuk-mcp-math"
     ],
     "optional_dependencies": {
-        "dev": ["pytest", "pytest-asyncio", "black", "isort", "flake8", "mypy", "pre-commit"]
+        "http": ["fastapi", "uvicorn"],
+        "yaml": ["pyyaml"],
+        "full": ["fastapi", "uvicorn", "pyyaml", "httpx"]
     }
 }
 
@@ -90,42 +96,25 @@ def check_dependencies():
     except ImportError:
         dependencies["required"]["chuk_mcp_math"] = False
     
+    # Check optional dependencies
     try:
         import fastapi
-        dependencies["required"]["fastapi"] = True
-    except ImportError:
-        dependencies["required"]["fastapi"] = False
-    
-    try:
         import uvicorn
-        dependencies["required"]["uvicorn"] = True
+        dependencies["optional"]["http"] = True
     except ImportError:
-        dependencies["required"]["uvicorn"] = False
-    
-    try:
-        import httpx
-        dependencies["required"]["httpx"] = True
-    except ImportError:
-        dependencies["required"]["httpx"] = False
+        dependencies["optional"]["http"] = False
     
     try:
         import yaml
-        dependencies["required"]["pyyaml"] = True
+        dependencies["optional"]["yaml"] = True
     except ImportError:
-        dependencies["required"]["pyyaml"] = False
-    
-    # Check optional dependencies
-    try:
-        import pytest
-        dependencies["optional"]["pytest"] = True
-    except ImportError:
-        dependencies["optional"]["pytest"] = False
+        dependencies["optional"]["yaml"] = False
     
     try:
-        import black
-        dependencies["optional"]["black"] = True
+        import httpx
+        dependencies["optional"]["httpx"] = True
     except ImportError:
-        dependencies["optional"]["black"] = False
+        dependencies["optional"]["httpx"] = False
     
     return dependencies
 
@@ -145,54 +134,33 @@ def print_dependency_status():
     for dep, available in deps["optional"].items():
         status = "✅" if available else "❌"
         feature = {
-            "pytest": "Testing framework",
-            "black": "Code formatting"
+            "http": "HTTP transport support",
+            "yaml": "YAML configuration files", 
+            "httpx": "HTTP client examples"
         }.get(dep, dep)
         print(f"  {status} {dep} ({feature})")
     
     # Installation suggestions
-    missing_required = [dep for dep, available in deps["required"].items() if not available]
     missing_optional = [dep for dep, available in deps["optional"].items() if not available]
-    
-    if missing_required:
-        print("\n❌ Missing required dependencies:")
-        for dep in missing_required:
-            print(f"   pip install {dep}")
-    
     if missing_optional:
         print("\n💡 To install missing optional dependencies:")
-        print("   pip install chuk-mcp-math-server[dev]  # Install all dev deps")
+        if "http" in missing_optional:
+            print("   pip install fastapi uvicorn  # For HTTP transport")
+        if "yaml" in missing_optional:
+            print("   pip install pyyaml  # For YAML config files")
+        if "httpx" in missing_optional:
+            print("   pip install httpx  # For HTTP client examples")
+        print("   pip install fastapi uvicorn pyyaml httpx  # Install all optional deps")
 
-# Convenience function for quick server startup
-def create_server(config_file=None, **kwargs):
-    """Create a configured server instance.
-    
-    Args:
-        config_file: Optional path to configuration file
-        **kwargs: Additional configuration options
-    
-    Returns:
-        ConfigurableMCPMathServer instance
-    """
-    if config_file:
-        config = ServerConfig.from_file(config_file)
-        # Apply any overrides
-        for key, value in kwargs.items():
-            if hasattr(config, key):
-                setattr(config, key, value)
-    else:
-        config = ServerConfig(**kwargs)
-    
-    return ConfigurableMCPMathServer(config)
-
+# Convenience functions for quick server startup
 def run_server_stdio(**kwargs):
     """Quick stdio server startup."""
     import asyncio
-    server = create_server(transport="stdio", **kwargs)
+    server = create_math_server(transport="stdio", **kwargs)
     asyncio.run(server.run())
 
 def run_server_http(port=8000, host="0.0.0.0", **kwargs):
     """Quick HTTP server startup."""
     import asyncio
-    server = create_server(transport="http", port=port, host=host, **kwargs)
+    server = create_math_server(transport="http", port=port, host=host, **kwargs)
     asyncio.run(server.run())
