@@ -1,0 +1,48 @@
+# config/server_config.yaml - Full Configuration Example
+# Transport settings
+transport: "http"
+port: 8000
+host: "0.0.0.0"
+
+# Global feature toggles
+enable_tools: true
+enable_prompts: true
+enable_resources: true
+
+# Function filtering - choose what mathematical functions to expose
+function_whitelist: []  # If empty, all functions allowed (subject to other filters)
+function_blacklist: 
+  - "slow_function_example"
+  - "deprecated_function"
+
+# Domain filtering - mathematical domains
+domain_whitelist: []  # If empty, all domains allowed
+domain_blacklist: []  # Domains to exclude
+
+# Category filtering - function categories
+category_whitelist: []  # If empty, all categories allowed
+category_blacklist: []  # Categories to exclude
+
+# Performance settings
+cache_strategy: "smart"  # none, memory, smart
+cache_size: 1000
+max_concurrent_calls: 10
+computation_timeout: 30.0
+
+# Logging and debugging
+log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+verbose: false
+quiet: false
+
+# Security settings
+enable_cors: true
+rate_limit_enabled: false
+rate_limit_per_minute: 60
+
+# Server metadata
+server_name: "chuk-mcp-math-server"
+server_description: "Configurable mathematical computation server"
+
+# Advanced options
+streaming_threshold: 1000
+memory_limit_mb: 512

@@ -1,0 +1,107 @@
+# config/prime_focused.yaml - Prime Number Focused Configuration
+# Optimized configuration with <128 functions for prime number demonstrations
+
+transport: "stdio"
+
+# Enable only essential features
+enable_tools: true
+enable_prompts: false
+enable_resources: false
+
+# Only number theory domain for prime operations
+domain_whitelist:
+  - "number_theory"
+
+# Include only prime-related and essential functions
+function_whitelist:
+  # Core prime functions
+  - "is_prime"
+  - "next_prime"
+  - "previous_prime"
+  - "prime_factors"
+  - "prime_factorization"
+  - "nth_prime"
+  - "count_primes"
+  - "primes_in_range"
+  
+  # Essential number theory for cryptography
+  - "gcd"
+  - "lcm"
+  - "extended_gcd"
+  - "mod_inverse"
+  - "euler_totient"
+  - "carmichael_lambda"
+  
+  # Basic arithmetic needed for prime work
+  - "add"
+  - "subtract"
+  - "multiply"
+  - "divide"
+  - "modulo"
+  - "power"
+  - "mod_power"
+  
+  # Comparison functions for prime analysis
+  - "equal"
+  - "greater_than" 
+  - "less_than"
+  - "maximum"
+  - "minimum"
+  
+  # Special prime types
+  - "is_twin_prime"
+  - "twin_primes_in_range"
+  - "is_mersenne_prime"
+  - "is_safe_prime"
+  - "is_sophie_germain_prime"
+  
+  # Divisibility and factors
+  - "divisors"
+  - "proper_divisors"
+  - "count_divisors"
+  - "is_perfect_number"
+  - "sum_of_divisors"
+  
+  # Sequences related to primes
+  - "fibonacci"
+  - "fibonacci_sequence"
+  
+  # Cryptographic functions
+  - "primitive_root"
+  - "is_primitive_root"
+  - "legendre_symbol"
+  - "jacobi_symbol"
+  - "quadratic_residue"
+  - "is_quadratic_residue"
+  
+  # Miller-Rabin and primality testing
+  - "miller_rabin"
+  - "is_probable_prime"
+
+# Exclude computationally expensive functions
+function_blacklist:
+  - "vampire_numbers"
+  - "taxi_numbers" 
+  - "partition_count"
+  - "stirling_second"
+  - "bell_numbers"
+  - "catalan_numbers"
+  - "collatz_sequence"
+  - "collatz_stopping_time"
+  - "perfect_numbers_up_to"
+  - "abundant_numbers_up_to"
+  - "deficient_numbers_up_to"
+
+# Performance settings optimized for prime calculations
+cache_strategy: "memory"
+cache_size: 500
+computation_timeout: 20.0
+max_concurrent_calls: 5
+
+# Minimal logging for clean output
+log_level: "INFO"
+verbose: false
+quiet: false
+
+server_name: "prime-focused-server"
+server_description: "Prime number focused mathematical server with <128 functions"

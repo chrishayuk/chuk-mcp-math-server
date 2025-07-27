@@ -1,0 +1,23 @@
+# config/arithmetic_basic.yaml - Basic Arithmetic Only
+# Minimal configuration for basic arithmetic operations
+
+transport: "stdio"
+
+enable_tools: true
+enable_prompts: false
+enable_resources: false
+
+# Only arithmetic domain
+domain_whitelist:
+  - "arithmetic"
+
+# Only core arithmetic operations
+category_whitelist:
+  - "core"
+  - "comparison"
+
+cache_strategy: "none"  # No caching for simple operations
+computation_timeout: 5.0
+
+server_name: "arithmetic-basic-server"
+server_description: "Basic arithmetic operations server"

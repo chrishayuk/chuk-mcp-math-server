@@ -1,0 +1,35 @@
+# config/production.yaml - Production Configuration
+transport: "http"
+port: 8000
+host: "0.0.0.0"
+
+enable_tools: true
+enable_prompts: true
+enable_resources: true
+
+# Balanced function set - exclude experimental/unstable functions
+function_blacklist:
+  - "experimental_function"  # If any exist
+
+# Production performance settings
+cache_strategy: "smart"
+cache_size: 2000
+max_concurrent_calls: 15
+computation_timeout: 45.0
+
+# Production logging
+log_level: "INFO"
+verbose: false
+quiet: false
+
+# Security settings for production
+enable_cors: true
+rate_limit_enabled: true
+rate_limit_per_minute: 120
+
+# Resource limits
+streaming_threshold: 1000
+memory_limit_mb: 768
+
+server_name: "production-math-server"
+server_description: "Production mathematical computation server"
