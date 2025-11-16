@@ -7,7 +7,7 @@ A highly configurable Mathematical Computation Protocol (MCP) server that provid
 comprehensive mathematical functions with flexible transport options (stdio/HTTP).
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Chuk AI Team"
 __description__ = "Configurable mathematical computation server for MCP protocol"
 

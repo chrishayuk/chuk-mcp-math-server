@@ -1,4 +1,4 @@
-.PHONY: clean clean-pyc clean-build clean-test clean-all test run build publish help install dev-install
+.PHONY: clean clean-pyc clean-build clean-test clean-all test run build publish publish-test help install dev-install lint format typecheck check info run-http
 
 # Default target
 help:
@@ -7,18 +7,21 @@ help:
 	@echo ""
 	@echo "Available targets:"
 	@echo "  clean        - Remove Python bytecode and basic artifacts"
-	@echo "  clean-all    - Deep clean everything"
-	@echo "  install      - Install package"
-	@echo "  dev-install  - Install in dev mode with dependencies"
+	@echo "  clean-all    - Deep clean everything (pyc, build, test, cache)"
+	@echo "  install      - Install package in current environment"
+	@echo "  dev-install  - Install in dev mode with all dependencies"
 	@echo "  lint         - Run ruff linter"
 	@echo "  format       - Auto-format code with ruff"
 	@echo "  typecheck    - Run mypy type checker"
 	@echo "  test         - Run tests"
-	@echo "  test-cov     - Run tests with coverage"
+	@echo "  test-cov     - Run tests with coverage report"
 	@echo "  check        - Run all checks (lint, typecheck, test-cov)"
 	@echo "  run          - Run math server (stdio mode)"
-	@echo "  run-http     - Run math server (HTTP mode)"
-	@echo "  build        - Build the project"
+	@echo "  run-http     - Run math server (HTTP mode on port 8000)"
+	@echo "  build        - Build distribution packages"
+	@echo "  publish      - Build and publish to PyPI"
+	@echo "  publish-test - Build and publish to test PyPI"
+	@echo "  info         - Show project information"
 	@echo ""
 
 # Clean targets
@@ -112,8 +115,67 @@ run-http:
 
 # Build
 build: clean-build
+	@echo "Building project..."
 	@if command -v uv >/dev/null 2>&1; then \
 		uv build; \
 	else \
 		python -m build; \
 	fi
+	@echo "Build complete. Distributions are in the 'dist' folder."
+
+# Publish to PyPI
+publish: build
+	@echo "Publishing package to PyPI..."
+	@if [ ! -d "dist" ] || [ -z "$$(ls -A dist 2>/dev/null)" ]; then \
+		echo "Error: No distribution files found. Run 'make build' first."; \
+		exit 1; \
+	fi
+	@last_build=$$(ls -t dist/*.tar.gz dist/*.whl 2>/dev/null | head -n 2); \
+	if [ -z "$$last_build" ]; then \
+		echo "Error: No valid distribution files found."; \
+		exit 1; \
+	fi; \
+	echo "Uploading: $$last_build"; \
+	if command -v uv >/dev/null 2>&1; then \
+		uv run twine upload $$last_build; \
+	else \
+		twine upload $$last_build; \
+	fi
+	@echo "Publish complete."
+
+# Publish to Test PyPI
+publish-test: build
+	@echo "Publishing to test PyPI..."
+	@last_build=$$(ls -t dist/*.tar.gz dist/*.whl 2>/dev/null | head -n 2); \
+	if [ -z "$$last_build" ]; then \
+		echo "Error: No valid distribution files found."; \
+		exit 1; \
+	fi; \
+	echo "Uploading to test PyPI: $$last_build"; \
+	if command -v uv >/dev/null 2>&1; then \
+		uv run twine upload --repository testpypi $$last_build; \
+	else \
+		twine upload --repository testpypi $$last_build; \
+	fi
+
+# Show project info
+info:
+	@echo "Project Information:"
+	@echo "==================="
+	@if [ -f "pyproject.toml" ]; then \
+		echo "Package: chuk-mcp-math-server"; \
+		grep "^version" pyproject.toml || echo "Version: unknown"; \
+		echo ""; \
+		if command -v uv >/dev/null 2>&1; then \
+			echo "UV version: $$(uv --version)"; \
+		fi; \
+		if command -v python >/dev/null 2>&1; then \
+			echo "Python version: $$(python --version)"; \
+		fi; \
+	else \
+		echo "No pyproject.toml found"; \
+	fi
+	@echo "Current directory: $$(pwd)"
+	@echo ""
+	@echo "Git status:"
+	@git status --short 2>/dev/null || echo "Not a git repository"
