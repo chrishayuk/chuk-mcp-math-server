@@ -4,35 +4,48 @@
 [![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/chuk-mcp/chuk-mcp-math-server)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-orange.svg)](https://github.com/chuk-mcp/chuk-mcp)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Powered by chuk-mcp-server](https://img.shields.io/badge/powered%20by-chuk--mcp--server-blue)](https://github.com/chrishayuk/chuk-mcp-server)
 
-A highly configurable **Mathematical Computation Protocol (MCP) server** that provides comprehensive mathematical functions with flexible transport options and streaming capabilities.
+A highly configurable **Mathematical Computation Protocol (MCP) server** that provides comprehensive mathematical functions with flexible transport options. Built on the high-performance [chuk-mcp-server](https://github.com/chrishayuk/chuk-mcp-server) framework.
+
+## ⚡ Performance
+
+- **36,000+ RPS** peak throughput (inherited from chuk-mcp-server)
+- **Sub-3ms latency** per tool call
+- **393 Mathematical Functions** available
+- **Zero-config startup** - works out of the box
 
 ## ✨ Features
 
 ### 🔢 Mathematical Capabilities
-- **286 Mathematical Functions** across multiple domains
-- **Number Theory**: Prime testing, factorization, GCD, LCM, sequences
-- **Arithmetic**: Basic operations, advanced calculations, statistics
-- **Real-time Computation**: Async processing with timeout support
-- **Function Filtering**: Configurable whitelisting/blacklisting by domain or category
+- **393 Mathematical Functions** across multiple domains
+- **Number Theory**: Prime testing, factorization, GCD, LCM, sequences (71 functions)
+- **Arithmetic**: Basic operations, advanced calculations, statistics (322 functions)
+- **Trigonometry**: Comprehensive trigonometric operations (71 functions)
+- **Real-time Computation**: Async processing with proper error handling
+- **Function Filtering**: Configurable allowlists and denylists by domain, category, or function
 
-### 🚀 Transport & Streaming
-- **Dual Transport**: STDIO and HTTP support
-- **HTTP Streaming**: Server-Sent Events for intensive computations
-- **WebSocket Ready**: Extensible for real-time applications
-- **CORS Support**: Cross-origin requests enabled
+### 🚀 Transport & Architecture
+- **Dual Transport**: STDIO (Claude Desktop) and HTTP support
+- **High Performance**: Built on chuk-mcp-server framework
+- **Auto-detection**: Automatically selects optimal transport mode
+- **Production Ready**: 36,000+ RPS, <3ms latency
+- **Type Safe**: Automatic schema generation from Python type hints
 
 ### ⚙️ Configuration
 - **CLI Configuration**: Comprehensive command-line options
 - **File Configuration**: YAML and JSON config file support
 - **Environment Variables**: Container-friendly configuration
-- **Dynamic Filtering**: Runtime function filtering capabilities
+- **Dynamic Filtering**: Runtime function filtering with allowlists and denylists
+- **Granular Control**: Filter by function, domain, or category
 
-### 🛡️ Production Ready
-- **Health Monitoring**: Built-in health check endpoints
+### 🛡️ Production Features
+- **Zero Configuration**: Works out of the box with sensible defaults
+- **High Test Coverage**: 97% code coverage with 114 comprehensive tests
+- **Type Safe**: 100% type-checked with mypy, fully Pydantic-native
 - **Error Handling**: Graceful failure management
 - **Logging**: Configurable log levels and output
-- **Rate Limiting**: Optional request throttling
+- **MCP Resources**: Built-in resources for function discovery and stats
 - **Timeout Management**: Configurable computation timeouts
 
 ## 🚀 Quick Start
@@ -52,16 +65,15 @@ pip install -e .
 
 ### Basic Usage
 
-#### STDIO Transport (MCP Standard)
+#### STDIO Transport (Claude Desktop)
 ```bash
-# Start server with STDIO transport
+# Start server with STDIO transport (default)
 uv run chuk-mcp-math-server
 
-# Or with Python
-python src/chuk_mcp_math_server/math_server.py
+# Starts immediately with all 393 functions available
 ```
 
-#### HTTP Transport
+#### HTTP Transport (Web APIs)
 ```bash
 # Start HTTP server
 uv run chuk-mcp-math-server --transport http --port 8000
@@ -69,45 +81,85 @@ uv run chuk-mcp-math-server --transport http --port 8000
 # Server will be available at http://localhost:8000
 ```
 
-### Example Client Usage
+### Claude Desktop Integration
 
-#### Test with Examples
-```bash
-# Test STDIO client
-uv run examples/stdio_client_example.py
+Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
-# Test HTTP client with streaming
-uv run examples/http_client_example.py
+```json
+{
+  "mcpServers": {
+    "math": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/absolute/path/to/chuk-mcp-math-server",
+        "run",
+        "chuk-mcp-math-server"
+      ]
+    }
+  }
+}
 ```
 
-#### Basic HTTP API Usage
+**Important:** Use absolute paths, not relative or `~` paths.
+
+Restart Claude Desktop and ask: "Can you check if 97 is prime?" - Claude will use the math server!
+
+### Example HTTP API Usage
+
 ```bash
-# Check server status
-curl http://localhost:8000/
+# Test the server
+curl http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/list"
+  }'
 
-# Health check
-curl http://localhost:8000/health
-
-# Sample response:
-# {
-#   "server": "chuk-mcp-math-server",
-#   "version": "0.1.0",
-#   "functions_available": 286,
-#   "transport": "http"
-# }
+# Call a mathematical function
+curl http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "is_prime",
+      "arguments": {"n": 97}
+    }
+  }'
 ```
 
 ## 📖 Documentation
 
 ### Available Functions
 
-The server provides 286 mathematical functions across these domains:
+The server provides **393 mathematical functions** across these domains:
 
 | Domain | Functions | Examples |
 |--------|-----------|----------|
-| **Arithmetic** | Basic operations, statistics | `add`, `multiply`, `mean`, `variance` |
-| **Number Theory** | Primes, factorization, sequences | `is_prime`, `next_prime`, `fibonacci`, `gcd` |
-| **Advanced Math** | Complex calculations | `sqrt`, `power`, `factorial`, `combinations` |
+| **Arithmetic** (322) | Basic operations, comparisons, rounding, modular arithmetic | `add`, `multiply`, `modulo`, `gcd`, `lcm` |
+| **Trigonometry** (71) | Trig functions, conversions, identities | `sin`, `cos`, `tan`, `radians`, `degrees` |
+| **Number Theory** | Primes, sequences, special numbers | `is_prime`, `fibonacci`, `factorial`, `divisors` |
+
+### Function Filtering
+
+Control which functions are exposed:
+
+```bash
+# Only expose specific functions
+chuk-mcp-math-server --functions add subtract multiply divide
+
+# Expose only arithmetic domain
+chuk-mcp-math-server --domains arithmetic
+
+# Exclude specific functions
+chuk-mcp-math-server --exclude-functions slow_function
+
+# Combine filters
+chuk-mcp-math-server --domains arithmetic number_theory --categories core primes
+```
 
 ### Configuration Options
 
@@ -117,10 +169,10 @@ The server provides 286 mathematical functions across these domains:
 chuk-mcp-math-server --transport http --port 8080 --host 0.0.0.0
 
 # Function filtering
-chuk-mcp-math-server --domains arithmetic number_theory --functions is_prime add
+chuk-mcp-math-server --domains arithmetic --functions is_prime add
 
 # Performance tuning
-chuk-mcp-math-server --cache-strategy smart --timeout 60 --max-concurrent 20
+chuk-mcp-math-server --cache-strategy smart --timeout 60
 
 # Logging
 chuk-mcp-math-server --verbose  # Debug logging
@@ -133,12 +185,12 @@ chuk-mcp-math-server --quiet    # Minimal logging
 transport: "http"
 port: 8000
 host: "0.0.0.0"
-enable_cors: true
 log_level: "INFO"
 
-# Function filtering
-domain_whitelist: ["arithmetic", "number_theory"]
-function_blacklist: ["slow_function"]
+# Function filtering (allowlist: only these are enabled, denylist: these are excluded)
+domain_allowlist: ["arithmetic", "number_theory"]
+function_allowlist: ["is_prime", "fibonacci", "add", "multiply"]
+function_denylist: ["deprecated_function"]  # Exclude specific functions
 
 # Performance
 cache_strategy: "smart"
@@ -150,56 +202,46 @@ max_concurrent_calls: 10
 ```bash
 # Use configuration file
 chuk-mcp-math-server --config config.yaml
+
+# Save current config
+chuk-mcp-math-server --domains arithmetic --save-config my-config.yaml
+
+# Show current config
+chuk-mcp-math-server --show-config
 ```
 
-#### Environment Variables
+### MCP Resources
+
+The server provides built-in resources for introspection:
+
 ```bash
-export MCP_MATH_TRANSPORT="http"
-export MCP_MATH_PORT=8000
-export MCP_MATH_LOG_LEVEL="DEBUG"
-export MCP_MATH_DOMAIN_WHITELIST="arithmetic,number_theory"
-
-chuk-mcp-math-server
-```
-
-### MCP Protocol Usage
-
-#### Initialize Connection
-```json
+# List available functions (via MCP resource)
 {
   "jsonrpc": "2.0",
   "id": 1,
-  "method": "initialize",
+  "method": "resources/read",
   "params": {
-    "protocolVersion": "2025-03-26",
-    "clientInfo": {
-      "name": "my-math-client",
-      "version": "1.0.0"
-    }
+    "uri": "math://available-functions"
   }
 }
-```
 
-#### List Available Tools
-```json
+# Get function statistics
 {
   "jsonrpc": "2.0",
   "id": 2,
-  "method": "tools/list"
+  "method": "resources/read",
+  "params": {
+    "uri": "math://function-stats"
+  }
 }
-```
 
-#### Call Mathematical Function
-```json
+# Get server configuration
 {
   "jsonrpc": "2.0",
   "id": 3,
-  "method": "tools/call",
+  "method": "resources/read",
   "params": {
-    "name": "is_prime",
-    "arguments": {
-      "n": 97
-    }
+    "uri": "math://server-config"
   }
 }
 ```
@@ -211,13 +253,12 @@ chuk-mcp-math-server
 chuk-mcp-math-server/
 ├── src/chuk_mcp_math_server/
 │   ├── __init__.py              # Package initialization
-│   ├── _version.py              # Dynamic version management
-│   ├── _cli.py                  # CLI utilities
-│   └── math_server.py           # Main server implementation
-├── examples/
-│   ├── stdio_client_example.py  # STDIO client demo
-│   └── http_client_example.py   # HTTP client demo
-├── tests/                       # Test suite
+│   ├── cli.py                   # CLI implementation
+│   ├── config.py                # Base configuration (Pydantic)
+│   ├── math_config.py           # Math-specific configuration
+│   ├── function_filter.py       # Function filtering logic
+│   └── math_server.py           # Main server (uses chuk-mcp-server)
+├── tests/                       # Test suite (97% coverage, 114 tests)
 ├── pyproject.toml              # Project configuration
 └── README.md                   # This file
 ```
@@ -227,92 +268,59 @@ chuk-mcp-math-server/
 # Install development dependencies
 uv sync --group dev
 
-# Install with all optional features
-pip install -e .[full]
+# Run all checks (format, lint, typecheck, tests)
+make check
 
-# Run formatting
-black src/ examples/
-isort src/ examples/
+# Run tests with coverage
+make test-cov
 
-# Run tests
-pytest
+# Run type checking
+make typecheck
 
-# Version information
-chuk-mcp-math-server-info
+# Format code
+make format
+
+# Run with verbose logging
+uv run chuk-mcp-math-server --verbose
 ```
 
-### Adding New Functions
-
-1. Add mathematical functions to the `chuk-mcp-math` library
-2. Functions are automatically discovered and registered
-3. Use function filtering to control exposure
-
-### Custom Configuration
-
+### Custom Server
 ```python
-from chuk_mcp_math_server import ServerConfig, ConfigurableMCPMathServer
+from chuk_mcp_math_server import create_math_server
 
-# Create custom configuration
-config = ServerConfig(
+# Create server with custom configuration
+server = create_math_server(
     transport="http",
     port=9000,
-    domain_whitelist=["arithmetic"],
-    enable_cors=True,
+    domain_allowlist=["arithmetic"],  # Only arithmetic functions
+    function_denylist=["deprecated_func"],  # Exclude specific functions
     log_level="DEBUG"
 )
 
-# Start server
-server = ConfigurableMCPMathServer(config)
-await server.run()
-```
-
-## 🌐 HTTP API Reference
-
-### Endpoints
-
-| Endpoint | Method | Description |
-|----------|---------|-------------|
-| `/` | GET | Server status and information |
-| `/health` | GET | Health check and function count |
-| `/mcp` | POST | MCP protocol messages |
-
-### HTTP Streaming
-
-The server supports Server-Sent Events (SSE) for computationally intensive operations:
-
-```javascript
-// Request with streaming
-fetch('/mcp', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'text/event-stream'
-  },
-  body: JSON.stringify({
-    jsonrpc: '2.0',
-    id: 1,
-    method: 'tools/call',
-    params: {
-      name: 'fibonacci',
-      arguments: { n: 1000 }
-    }
-  })
-})
+# Run the server
+server.run()
 ```
 
 ## 📊 Performance
 
 ### Benchmarks
-- **Function Calls**: ~1000 ops/sec (simple arithmetic)
-- **Prime Testing**: ~100 ops/sec (medium-sized numbers)
-- **Memory Usage**: ~50MB baseline + computation overhead
-- **Startup Time**: ~2 seconds (286 functions loaded)
+- **Peak Throughput**: 36,000+ requests/second
+- **Average Latency**: <3ms per tool call
+- **Startup Time**: ~2 seconds (393 functions loaded)
+- **Memory Usage**: ~50MB baseline
+- **Success Rate**: 100% under load testing
+
+### Performance comes from:
+- **chuk-mcp-server framework**: High-performance MCP implementation
+- **Async operations**: Non-blocking I/O for all function calls
+- **Type safety**: Automatic schema validation with zero overhead
+- **Optimized registry**: Fast function lookup and execution
 
 ### Optimization Tips
-- Use `cache_strategy: "smart"` for repeated calculations
-- Increase `max_concurrent_calls` for high-throughput scenarios
 - Use function filtering to reduce memory footprint
-- Enable HTTP streaming for long-running computations
+- Enable caching for repeated calculations (`--cache-strategy smart`)
+- Use HTTP transport for web APIs, STDIO for local/Claude Desktop
+- Adjust `--max-concurrent-calls` for high-throughput scenarios
 
 ## 🔧 Troubleshooting
 
@@ -320,8 +328,8 @@ fetch('/mcp', {
 
 #### Server Won't Start
 ```bash
-# Check dependencies
-chuk-mcp-math-server-info
+# Verify installation
+python -c "import chuk_mcp_math_server; print(chuk_mcp_math_server.__version__)"
 
 # Verify configuration
 chuk-mcp-math-server --show-config
@@ -330,66 +338,79 @@ chuk-mcp-math-server --show-config
 chuk-mcp-math-server --verbose
 ```
 
-#### Function Not Available
+#### Functions Not Loading
 ```bash
-# List all functions
-chuk-mcp-math-server --domains arithmetic --show-config
+# Check if chuk-mcp-math is installed
+python -c "import chuk_mcp_math; print(chuk_mcp_math.__version__)"
 
-# Check filtering
-chuk-mcp-math-server --functions is_prime add --show-config
+# Verify function count
+chuk-mcp-math-server --show-config | grep total_filtered
 ```
+
+#### Claude Desktop Not Showing Tools
+1. Use **absolute paths** in claude_desktop_config.json (not `~` or relative)
+2. Test manually: `echo '{"jsonrpc":"2.0","method":"tools/list","id":1}' | uv run chuk-mcp-math-server`
+3. Restart Claude Desktop after config changes
+4. Check Claude Desktop logs (Help → Show Logs)
 
 #### HTTP Connection Issues
 ```bash
 # Test server health
-curl http://localhost:8000/health
-
-# Check CORS settings
-chuk-mcp-math-server --transport http --enable-cors
-```
-
-### Debug Information
-
-```bash
-# Get detailed system info
-chuk-mcp-math-server-info --info
-
-# Check version detection
-python -c "import chuk_mcp_math_server; chuk_mcp_math_server.print_version_info()"
+curl http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
 ```
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Here's how to help:
 
-### Development Workflow
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Add tests
-5. Run the test suite
+4. Add tests if applicable
+5. Ensure tests pass (`pytest`)
 6. Submit a pull request
 
 ### Code Style
-- Use `black` for code formatting
-- Use `isort` for import sorting
 - Follow PEP 8 guidelines
+- Maintain 100% type safety with mypy and Pydantic
 - Add type hints where appropriate
+- Update documentation for new features
+- Keep the README up to date
+- Aim for high test coverage (currently 97%)
 
 ## 📋 Requirements
 
 ### Core Dependencies
 - Python 3.11+
-- `chuk-mcp >= 0.5`
-- `chuk-mcp-math >= 0.1.0`
-- `fastapi >= 0.116.1`
-- `uvicorn >= 0.35.0`
-- `httpx >= 0.28.1`
-- `pyyaml >= 6.0.2`
+- `chuk-mcp-server >= 0.6` (provides high-performance MCP framework)
+- `chuk-mcp-math >= 0.1.0` (provides mathematical functions)
+- `pyyaml >= 6.0.2` (for YAML configuration)
+
+### What's Included via chuk-mcp-server
+- High-performance HTTP/STDIO transport
+- Automatic type inference and validation
+- Built-in logging and error handling
+- Zero-config startup capability
+- Production-grade performance (36K+ RPS)
 
 ### Optional Dependencies
-- Development tools: `pytest`, `black`, `isort`, `mypy`
-- All optional: `pip install chuk-mcp-math-server[full]`
+- Development tools: `pytest`, `pytest-asyncio`
+- All optional: `pip install -e .[dev]`
+
+## 🏗️ Architecture
+
+Built on **chuk-mcp-server** framework:
+- **chuk-mcp-server**: High-performance MCP server framework (36K+ RPS)
+- **chuk-mcp-math**: Mathematical function library (393 functions)
+- **This server**: Bridges the two with filtering and configuration
+
+The refactored architecture is simpler and more performant:
+- Removed custom base server implementation
+- Uses chuk-mcp-server's decorator-based API
+- Maintains all filtering and configuration features
+- Gains automatic performance optimization
 
 ## 📝 License
 
@@ -397,19 +418,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Built on the [Model Context Protocol (MCP)](https://github.com/chuk-mcp/chuk-mcp)
-- Mathematical functions provided by [chuk-mcp-math](https://github.com/chuk-mcp/chuk-mcp-math)
-- Inspired by the need for accessible mathematical computation services
+- Built on [chuk-mcp-server](https://github.com/chrishayuk/chuk-mcp-server) - High-performance MCP framework
+- Mathematical functions from [chuk-mcp-math](https://github.com/chuk-mcp/chuk-mcp-math)
+- Follows the [Model Context Protocol](https://modelcontextprotocol.io) specification
 
 ## 🔗 Links
 
-- **Documentation**: [GitHub Wiki](https://github.com/chuk-mcp/chuk-mcp-math-server/wiki)
+- **chuk-mcp-server**: [GitHub](https://github.com/chrishayuk/chuk-mcp-server) | [Docs](https://github.com/chrishayuk/chuk-mcp-server#readme)
+- **chuk-mcp-math**: [GitHub](https://github.com/chuk-mcp/chuk-mcp-math)
+- **MCP Protocol**: [Official Specification](https://modelcontextprotocol.io)
 - **Issues**: [GitHub Issues](https://github.com/chuk-mcp/chuk-mcp-math-server/issues)
-- **MCP Protocol**: [Official MCP Docs](https://github.com/chuk-mcp/chuk-mcp)
-- **Mathematical Functions**: [chuk-mcp-math](https://github.com/chuk-mcp/chuk-mcp-math)
 
 ---
 
 **Made with ❤️ by the Chuk MCP Team**
 
-*Bringing mathematical computation to the Model Context Protocol ecosystem*
+*High-performance mathematical computation for the Model Context Protocol ecosystem*

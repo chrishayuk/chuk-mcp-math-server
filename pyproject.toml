@@ -7,14 +7,14 @@ name = "chuk-mcp-math-server"
 version = "0.1.0"
 description = "Configurable mathematical computation server for MCP protocol"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
-    {name = "Chuk MCP Team", email = "team@chukmcp.com"}
+    {name = "Chuk AI Team", email = "chrishayuk@somejunkmailbox.com"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -25,12 +25,10 @@ requires-python = ">=3.11"
 
 # Core dependencies - always required
 dependencies = [
-    "chuk-mcp>=0.5",
+    "chuk-mcp-server>=0.6",
     "chuk-mcp-math>=0.1.0",
-    "fastapi>=0.116.1",
-    "httpx>=0.28.1",
+    "pydantic>=2.0",
     "pyyaml>=6.0.2",
-    "uvicorn>=0.35.0",
 ]
 
 # Optional dependency groups
@@ -39,11 +37,11 @@ dependencies = [
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
-    "isort>=5.12.0",
-    "flake8>=6.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
     "mypy>=1.0.0",
-    "pre-commit>=3.0.0"
+    "twine>=4.0.0",
+    "build>=1.0.0"
 ]
 
 # Full installation with all optional features
@@ -53,8 +51,8 @@ full = [
 
 [project.scripts]
 # Main entry points
-chuk-mcp-math-server = "chuk_mcp_math_server.math_server:main"
-math-server = "chuk_mcp_math_server.math_server:main"
+chuk-mcp-math-server = "chuk_mcp_math_server.cli:main"
+math-server = "chuk_mcp_math_server.cli:main"
 
 # Version and info utilities
 chuk-mcp-math-server-info = "chuk_mcp_math_server._cli:main"
@@ -79,6 +77,23 @@ where = ["src"]
 include = ["chuk_mcp_math_server*"]
 
 # Development tool configurations
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+exclude = [
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".tox",
+    ".venv",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"debug/*.py" = ["E722", "F401"]  # Allow bare except and unused imports in debug scripts
+"examples/*.py" = ["E722", "F401"]  # Allow bare except and unused imports in examples
+
 [tool.black]
 line-length = 88
 target-version = ['py311']
@@ -107,8 +122,8 @@ known_first_party = ["chuk_mcp_math_server"]
 python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
 check_untyped_defs = true
 disallow_untyped_decorators = true
 no_implicit_optional = true

@@ -1,164 +1,190 @@
 #!/usr/bin/env python3
 # src/chuk_mcp_math_server/math_server.py
 """
-Mathematical MCP Server - extends the base server with math-specific functionality.
+Mathematical MCP Server - using chuk-mcp-server framework.
 """
 
-import asyncio
 import json
 import logging
-import inspect
 from typing import Dict, Any
 
-# Import our math library
-try:
-    import chuk_mcp_math
-    _math_library_available = True
-except ImportError as e:
-    _math_library_available = False
+from chuk_mcp_server import ChukMCPServer
 
-from .base_server import BaseMCPServer
 from .config import ServerConfig
 from .function_filter import FunctionFilter
 
 logger = logging.getLogger(__name__)
 
-class ConfigurableMCPMathServer(BaseMCPServer):
+
+class ConfigurableMCPMathServer:
     """MCP Math Server with granular control over exposed mathematical functionality."""
-    
+
     def __init__(self, config: ServerConfig):
+        self.config = config
+
+        # Configure logging early
+        log_level = getattr(logging, config.log_level.upper())
+        logging.getLogger().setLevel(log_level)
+
+        # For stdio mode with WARNING or higher, silence noisy dependencies
+        if config.transport == "stdio" and log_level >= logging.WARNING:
+            logging.getLogger("chuk_mcp_math").setLevel(logging.WARNING)
+            logging.getLogger("chuk_mcp_math_server.function_filter").setLevel(
+                logging.WARNING
+            )
+            logging.getLogger("chuk_mcp_math_server.math_server").setLevel(
+                logging.WARNING
+            )
+            logging.getLogger("chuk_mcp_math_server.cli").setLevel(logging.WARNING)
+
         self.function_filter = FunctionFilter(config)
-        super().__init__(config)
-        
+
+        # Create the underlying chuk-mcp-server instance
+        self.mcp_server = ChukMCPServer(
+            name=config.server_name or "chuk-mcp-math-server"
+        )
+
+        # Register all tools and resources
+        self._register_math_tools()
+        self._register_math_resources()
+
         # Log math-specific initialization
         stats = self.function_filter.get_function_stats()
-        logger.info(f"Math server initialized with {stats['total_filtered']}/{stats['total_available']} functions")
-    
-    def _register_tools(self):
+        logger.info(
+            f"Math server initialized with {stats['total_filtered']}/{stats['total_available']} functions"
+        )
+
+    def _register_math_tools(self):
         """Register filtered mathematical functions as MCP tools."""
-        if not self.mcp_server or not _math_library_available:
-            logger.warning("Cannot register math tools - server or library unavailable")
-            return
-        
+
         # Get filtered functions
         filtered_functions = self.function_filter.get_filtered_functions()
-        
+
         registered_count = 0
         for qualified_name, func_spec in filtered_functions.items():
             try:
-                # Register the tool with the MCP server
-                self.register_tool(
-                    name=func_spec.function_name,
-                    handler=self._create_math_handler(func_spec),
-                    schema=self.convert_to_json_schema(func_spec.parameters),
-                    description=f"{func_spec.description} (Domain: {func_spec.namespace}, Category: {func_spec.category})"
-                )
+                # Create a wrapper function that will be registered as a tool
+                # We need to dynamically create the function with proper signature
+                self._register_dynamic_tool(func_spec)
                 registered_count += 1
-                
+
             except Exception as e:
                 logger.error(f"Failed to register tool {qualified_name}: {e}")
-        
+
         logger.info(f"Registered {registered_count} mathematical tools")
-    
-    def _create_math_handler(self, func_spec):
-        """Create an async handler for a mathematical function."""
-        async def handler(**kwargs):
-            try:
-                return await self._execute_function(func_spec, kwargs)
-            except Exception as e:
-                logger.error(f"Error executing {func_spec.function_name}: {e}")
-                return f"Error: {str(e)}"
-        
-        return handler
-    
-    async def _execute_function(self, func_spec, kwargs):
-        """Execute a mathematical function with proper async handling."""
-        if func_spec.function_ref:
-            try:
-                # Check if it's actually a coroutine function
-                if inspect.iscoroutinefunction(func_spec.function_ref):
-                    result = await func_spec.function_ref(**kwargs)
-                else:
-                    result = func_spec.function_ref(**kwargs)
-                
-                return result
-            except Exception as e:
-                logger.error(f"Error executing {func_spec.function_name}: {e}")
-                return f"Error: {str(e)}"
-        else:
-            return f"Function reference not available for {func_spec.function_name}"
-    
-    def _register_resources(self):
-        """Register mathematical resources with configuration info."""
-        # Call parent method first
-        super()._register_resources()
-        
-        if not self.mcp_server or not hasattr(self.mcp_server, 'register_resource'):
+
+    def _register_dynamic_tool(self, func_spec):
+        """Dynamically register a mathematical function as a tool."""
+        # Get the original function
+        original_func = func_spec.function_ref
+
+        if not original_func:
+            logger.warning(f"No function reference for {func_spec.function_name}")
             return
-        
-        try:
-            # Available functions list
-            async def available_functions():
-                filtered_functions = self.function_filter.get_filtered_functions()
-                
-                functions_by_domain = {}
-                for func_spec in filtered_functions.values():
-                    domain = func_spec.namespace
-                    if domain not in functions_by_domain:
-                        functions_by_domain[domain] = []
-                    
-                    functions_by_domain[domain].append({
+
+        # Create description with domain and category info
+        description = f"{func_spec.description} (Domain: {func_spec.namespace}, Category: {func_spec.category})"
+
+        # Register the tool using the server's tool decorator
+        # The function already has proper type hints and async handling from chuk_mcp_math
+        self.mcp_server.tool(name=func_spec.function_name, description=description)(
+            original_func
+        )
+
+    def _register_math_resources(self):
+        """Register mathematical resources with configuration info."""
+        # Create a reference to self for use in closures
+        server = self
+
+        # Available functions list resource
+        @self.mcp_server.resource(  # type: ignore[misc]
+            "math://available-functions",
+            name="Available Functions",
+            description="List of currently available mathematical functions after filtering",
+            mime_type="application/json",
+        )
+        async def available_functions() -> str:
+            filtered_functions = server.function_filter.get_filtered_functions()
+
+            functions_by_domain: dict[str, list[dict[str, Any]]] = {}
+            for func_spec in filtered_functions.values():
+                domain = func_spec.namespace
+                if domain not in functions_by_domain:
+                    functions_by_domain[domain] = []
+
+                functions_by_domain[domain].append(
+                    {
                         "name": func_spec.function_name,
                         "description": func_spec.description,
                         "category": func_spec.category,
                         "async_native": func_spec.is_async_native,
-                        "cached": func_spec.cache_strategy != "none"
-                    })
-                
-                return json.dumps({
+                        "cached": func_spec.cache_strategy != "none",
+                    }
+                )
+
+            return json.dumps(
+                {
                     "total_functions": len(filtered_functions),
                     "functions_by_domain": functions_by_domain,
-                    "filtering_applied": self.function_filter.get_function_stats()["filtering_active"]
-                }, indent=2)
-            
-            self.mcp_server.register_resource(
-                uri="math://available-functions",
-                handler=available_functions,
-                name="Available Functions",
-                description="List of currently available mathematical functions after filtering",
-                mime_type="application/json"
+                    "filtering_applied": server.function_filter.get_function_stats()[
+                        "filtering_active"
+                    ],
+                },
+                indent=2,
             )
-            
-            # Function statistics
-            async def function_stats():
-                stats = self.function_filter.get_function_stats()
-                return json.dumps(stats, indent=2)
-            
-            self.mcp_server.register_resource(
-                uri="math://function-stats",
-                handler=function_stats,
-                name="Function Statistics",
-                description="Statistics about function filtering and availability",
-                mime_type="application/json"
-            )
-            
-            logger.info("Registered mathematical resources")
-            
-        except Exception as e:
-            logger.warning(f"Failed to register math resources: {e}")
-    
+
+        # Function statistics resource
+        @self.mcp_server.resource(  # type: ignore[misc]
+            "math://function-stats",
+            name="Function Statistics",
+            description="Statistics about function filtering and availability",
+            mime_type="application/json",
+        )
+        async def function_stats() -> str:
+            stats = server.function_filter.get_function_stats()
+            return json.dumps(stats, indent=2)
+
+        # Server configuration resource
+        @self.mcp_server.resource(  # type: ignore[misc]
+            "math://server-config",
+            name="Server Configuration",
+            description="Current server configuration",
+            mime_type="application/json",
+        )
+        async def server_config() -> str:
+            return json.dumps(server.config.model_dump(), indent=2)
+
+        logger.info("Registered mathematical resources")
+
     def get_function_stats(self) -> Dict[str, Any]:
         """Get function filtering statistics."""
         return self.function_filter.get_function_stats()
 
+    def run(self):
+        """Run the MCP server."""
+        # Determine transport mode
+        if self.config.transport == "http":
+            logger.info(
+                f"Starting HTTP server on {self.config.host}:{self.config.port}"
+            )
+            self.mcp_server.run(
+                host=self.config.host,
+                port=self.config.port,
+                log_level=self.config.log_level.lower(),
+            )
+        else:
+            logger.info("Starting stdio server")
+            self.mcp_server.run(stdio=True, log_level=self.config.log_level.lower())
+
+
 # Factory function for easy server creation
 def create_math_server(config_file=None, **kwargs) -> ConfigurableMCPMathServer:
     """Create a configured math server instance.
-    
+
     Args:
         config_file: Optional path to configuration file
         **kwargs: Additional configuration options
-    
+
     Returns:
         ConfigurableMCPMathServer instance
     """
@@ -170,5 +196,5 @@ def create_math_server(config_file=None, **kwargs) -> ConfigurableMCPMathServer:
                 setattr(config, key, value)
     else:
         config = ServerConfig(**kwargs)
-    
+
     return ConfigurableMCPMathServer(config)

@@ -1,0 +1,21 @@
+# Include the README and license
+include README.md
+include LICENSE
+
+# Include package data
+recursive-include src/chuk_mcp_math_server *.py
+
+# Include configuration files
+include pyproject.toml
+include Makefile
+
+# Include examples if they exist
+recursive-include examples *.py *.md *.yaml *.json
+
+# Exclude development and build artifacts
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .DS_Store
+global-exclude *.swp
+global-exclude .pytest_cache
+global-exclude .mypy_cache
