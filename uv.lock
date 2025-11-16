@@ -2,6 +2,9 @@ version = 1
 revision = 3
 requires-python = ">=3.11"
 
+[manifest]
+overrides = [{ name = "uvloop", marker = "sys_platform != 'win32'", specifier = ">=0.17.0" }]
+
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
@@ -260,7 +263,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "starlette" },
     { name = "uvicorn" },
-    { name = "uvloop" },
+    { name = "uvloop", marker = "sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/45/4c/8b0a16e826a4a9313f47dc44d1a6120b7630f4fe0975f52fc1b91d863cb7/chuk_mcp_server-0.7.5.tar.gz", hash = "sha256:82c3d619572803c1634c8ad9678317da0e04c939ae7f35d408182ad0cde87342", size = 458940, upload-time = "2025-11-07T12:44:02.357Z" }
 wheels = [

@@ -156,3 +156,10 @@ env = [
     "MCP_MATH_LOG_LEVEL=DEBUG",
     "MCP_MATH_TRANSPORT=stdio"
 ]
+
+# Dependency overrides for compatibility
+[tool.uv]
+override-dependencies = [
+    # uvloop doesn't support Windows, so we make it optional
+    "uvloop>=0.17.0; sys_platform != 'win32'"
+]
