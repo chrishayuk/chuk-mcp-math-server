@@ -51,6 +51,8 @@ A highly configurable **Mathematical Computation Protocol (MCP) server** that pr
 
 ## 🚀 Quick Start
 
+> **💡 Try it now!** Use our free public server at **https://math.chukai.io/mcp** - no installation required! See [Public Server](#-public-server) section below.
+
 ### Installation
 
 #### Using uvx (Recommended - No Installation Required!)
@@ -103,7 +105,27 @@ uv run chuk-mcp-math-server --transport http --port 8000
 
 Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
-#### Option 1: Using uvx (Easiest)
+#### Option 1: Use the Public Server (Easiest)
+
+Connect to the hosted public server at `math.chukai.io`:
+
+```json
+{
+  "mcpServers": {
+    "math": {
+      "command": "uvx",
+      "args": [
+        "chuk-mcp-client",
+        "https://math.chukai.io/mcp"
+      ]
+    }
+  }
+}
+```
+
+This requires no local installation and is always up-to-date!
+
+#### Option 2: Run Locally with uvx
 
 ```json
 {
@@ -116,7 +138,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 }
 ```
 
-#### Option 2: Using Local Installation
+#### Option 3: Run Locally with Local Installation
 
 ```json
 {
@@ -528,6 +550,70 @@ curl http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
 ```
+
+## 🌐 Public Server
+
+A free public math server is available at **https://math.chukai.io/mcp** for anyone to use!
+
+### Features
+- ✅ **Always Available**: Hosted on Fly.io with auto-scaling
+- ✅ **Always Up-to-Date**: Automatically deploys from main branch
+- ✅ **All 393 Functions**: Full mathematical function library
+- ✅ **No Installation Required**: Just add to Claude Desktop config
+- ✅ **Free to Use**: No authentication or API keys needed
+
+### Quick Start
+
+Add this to your Claude Desktop config:
+
+```json
+{
+  "mcpServers": {
+    "math": {
+      "command": "uvx",
+      "args": [
+        "chuk-mcp-client",
+        "https://math.chukai.io/mcp"
+      ]
+    }
+  }
+}
+```
+
+Then restart Claude Desktop and ask: "Can you check if 97 is prime?"
+
+### Testing the Public Server
+
+```bash
+# List available tools
+curl https://math.chukai.io/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
+
+# Call a function
+curl https://math.chukai.io/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0",
+    "id":2,
+    "method":"tools/call",
+    "params":{
+      "name":"is_prime",
+      "arguments":{"n":97}
+    }
+  }'
+```
+
+### Privacy & Usage
+
+- No logging of tool calls or personal data
+- No rate limiting (fair use applies)
+- Automatically scales based on demand
+- Source code is open and auditable
+
+### Self-Hosting
+
+Want to host your own? See the [Deployment](#-deployment) section above for Docker and Fly.io instructions.
 
 ## 🤝 Contributing
 
