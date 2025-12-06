@@ -58,7 +58,9 @@ def create_argument_parser() -> argparse.ArgumentParser:
         help="Port for HTTP transport (default: 8000)",
     )
     transport_group.add_argument(
-        "--host", default="0.0.0.0", help="Host for HTTP transport (default: 0.0.0.0)"
+        "--host",
+        default="0.0.0.0",  # nosec B104
+        help="Host for HTTP transport (default: 0.0.0.0)",
     )
 
     # Feature toggles

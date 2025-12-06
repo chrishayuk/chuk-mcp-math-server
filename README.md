@@ -1,9 +1,10 @@
 # 🧮 Chuk MCP Math Server
 
+[![PyPI version](https://badge.fury.io/py/chuk-mcp-math-server.svg)](https://badge.fury.io/py/chuk-mcp-math-server)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/chuk-mcp/chuk-mcp-math-server)
-[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-orange.svg)](https://github.com/chuk-mcp/chuk-mcp)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Tests](https://github.com/chuk-mcp/chuk-mcp-math-server/workflows/Test/badge.svg)](https://github.com/chuk-mcp/chuk-mcp-math-server/actions)
+[![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen)](https://github.com/chuk-mcp/chuk-mcp-math-server)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Powered by chuk-mcp-server](https://img.shields.io/badge/powered%20by-chuk--mcp--server-blue)](https://github.com/chrishayuk/chuk-mcp-server)
 
 A highly configurable **Mathematical Computation Protocol (MCP) server** that provides comprehensive mathematical functions with flexible transport options. Built on the high-performance [chuk-mcp-server](https://github.com/chrishayuk/chuk-mcp-server) framework.
@@ -52,15 +53,32 @@ A highly configurable **Mathematical Computation Protocol (MCP) server** that pr
 
 ### Installation
 
+#### Using uvx (Recommended - No Installation Required!)
+
+The easiest way to use the server is with `uvx`, which runs it without installing:
+
 ```bash
-# Clone the repository
+uvx chuk-mcp-math-server
+```
+
+This automatically downloads and runs the latest version. Perfect for Claude Desktop!
+
+#### Using uv (Recommended for Development)
+
+```bash
+# Install from PyPI
+uv pip install chuk-mcp-math-server
+
+# Or clone and install from source
 git clone https://github.com/chuk-mcp/chuk-mcp-math-server.git
 cd chuk-mcp-math-server
-
-# Install dependencies
 uv sync
-# or
-pip install -e .
+```
+
+#### Using pip (Traditional)
+
+```bash
+pip install chuk-mcp-math-server
 ```
 
 ### Basic Usage
@@ -84,6 +102,21 @@ uv run chuk-mcp-math-server --transport http --port 8000
 ### Claude Desktop Integration
 
 Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+
+#### Option 1: Using uvx (Easiest)
+
+```json
+{
+  "mcpServers": {
+    "math": {
+      "command": "uvx",
+      "args": ["chuk-mcp-math-server"]
+    }
+  }
+}
+```
+
+#### Option 2: Using Local Installation
 
 ```json
 {
@@ -265,23 +298,69 @@ chuk-mcp-math-server/
 
 ### Development Setup
 ```bash
-# Install development dependencies
-uv sync --group dev
+# Clone the repository
+git clone https://github.com/chuk-mcp/chuk-mcp-math-server.git
+cd chuk-mcp-math-server
 
-# Run all checks (format, lint, typecheck, tests)
-make check
+# Install development dependencies
+uv sync
+
+# Install in editable mode
+uv pip install -e ".[dev]"
+```
+
+### Running Tests
+
+```bash
+# Run tests
+make test
 
 # Run tests with coverage
 make test-cov
 
-# Run type checking
-make typecheck
+# Run specific test file
+uv run pytest tests/test_config.py -v
+```
+
+### Code Quality
+
+```bash
+# Run all quality checks (lint, typecheck, security, tests)
+make check
 
 # Format code
 make format
 
+# Run linting
+make lint
+
+# Run type checking
+make typecheck
+
+# Run security checks
+make security
+```
+
+### Building
+
+```bash
+# Build distribution packages
+make build
+
+# This creates wheel and source distributions in dist/
+```
+
+### Running Locally
+
+```bash
 # Run with verbose logging
 uv run chuk-mcp-math-server --verbose
+
+# Run HTTP server
+make run-http
+
+# Run STDIO server (default)
+make run
 ```
 
 ### Custom Server
@@ -300,6 +379,95 @@ server = create_math_server(
 # Run the server
 server.run()
 ```
+
+## 🚀 Deployment
+
+### Docker
+
+Build and run with Docker:
+
+```bash
+# Build the Docker image
+make docker-build
+
+# Run the container
+make docker-run
+
+# Or manually:
+docker build -t chuk-mcp-math-server .
+docker run -p 8000:8000 chuk-mcp-math-server
+```
+
+The server will be available at `http://localhost:8000`.
+
+### Fly.io
+
+Deploy to Fly.io for a public server:
+
+```bash
+# Install flyctl if you haven't already
+curl -L https://fly.io/install.sh | sh
+
+# Login to Fly.io
+flyctl auth login
+
+# Deploy (first time)
+flyctl launch
+
+# Or deploy updates
+flyctl deploy
+
+# Check status
+flyctl status
+
+# View logs
+flyctl logs
+```
+
+The `fly.toml` configuration is already set up for HTTP mode on port 8000. The server will auto-scale based on traffic (min 0, auto-start/stop).
+
+#### Environment Variables
+
+Configure via Fly.io secrets:
+
+```bash
+# Set environment variables
+flyctl secrets set MCP_SERVER_LOG_LEVEL=INFO
+flyctl secrets set MCP_MATH_CACHE_STRATEGY=smart
+
+# View secrets
+flyctl secrets list
+```
+
+### GitHub Actions
+
+The repository includes automated workflows:
+
+- **Test**: Runs on all PRs and commits (Ubuntu, Windows, macOS)
+- **Release**: Creates GitHub releases when tags are pushed
+- **Publish**: Publishes to PyPI automatically on releases
+- **Fly Deploy**: Auto-deploys to Fly.io on main branch pushes
+
+To create a release:
+
+```bash
+# Bump version in pyproject.toml
+make bump-patch  # or bump-minor, bump-major
+
+# Commit the version change
+git add pyproject.toml uv.lock
+git commit -m "Bump version to 0.2.1"
+git push
+
+# Create and push a tag to trigger release
+make publish
+```
+
+This will automatically:
+1. Create a GitHub release with changelog
+2. Run tests on all platforms
+3. Build and publish to PyPI
+4. Deploy to Fly.io (if configured)
 
 ## 📊 Performance
 

@@ -91,24 +91,34 @@ def load_math_configuration_from_sources(
     5. Math defaults (lowest priority)
     """
 
-    # Start with file-based config or defaults
+    # Start with defaults
+    base_dict = {}
+
+    # Load from file if provided
     if config_file:
         base_config = ServerConfig.from_file(config_file)
         base_dict = base_config.model_dump()
-    else:
-        base_dict = {}
+        logger.debug(f"Loaded configuration from file: {config_file}")
 
     # Override with environment variables (both generic and math-specific)
+    # Only apply values that are explicitly set in environment
     try:
+        env_overrides_found = False
+        # Create env_config once to get proper type conversions
         env_config = MathServerConfig.from_env()
-        # Only use non-default values from environment
-        for key, value in env_config.model_dump().items():
+        env_dict = env_config.model_dump()
+
+        for key in MathServerConfig.model_fields.keys():
             env_value = os.getenv(f"MCP_MATH_{key.upper()}") or os.getenv(
                 f"MCP_SERVER_{key.upper()}"
             )
+            # Only override if this specific key has an env var set
             if env_value is not None:
-                base_dict[key] = value
-        logger.debug("Applied environment variable overrides")
+                base_dict[key] = env_dict[key]
+                env_overrides_found = True
+
+        if env_overrides_found:
+            logger.debug("Applied environment variable overrides")
     except Exception as e:
         logger.warning(f"Error loading environment config: {e}")
 

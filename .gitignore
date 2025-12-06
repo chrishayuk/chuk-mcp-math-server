@@ -144,3 +144,5 @@ uv.lock
 coverage.xml
 htmlcov/
 *.bak
+.ruff_cache/
+.claude/

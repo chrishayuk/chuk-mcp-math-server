@@ -44,7 +44,7 @@ def run_server_stdio(**kwargs):
     server.run()
 
 
-def run_server_http(port=8000, host="0.0.0.0", **kwargs):
+def run_server_http(port=8000, host="0.0.0.0", **kwargs):  # nosec B104
     """Quick HTTP server startup."""
     server = create_math_server(transport="http", port=port, host=host, **kwargs)
     server.run()

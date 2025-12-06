@@ -22,7 +22,7 @@ class ServerConfig(BaseModel):
     # Transport settings
     transport: Literal["stdio", "http"] = "stdio"
     port: int = Field(default=8000, ge=1, le=65535)
-    host: str = "0.0.0.0"
+    host: str = "0.0.0.0"  # nosec B104
 
     # Global feature toggles
     enable_tools: bool = True

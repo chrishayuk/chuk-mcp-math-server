@@ -202,7 +202,7 @@ wheels = [
 
 [[package]]
 name = "chuk-mcp-math-server"
-version = "0.2.0"
+version = "0.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "chuk-mcp-math" },
@@ -234,9 +234,9 @@ full = [
 [package.metadata]
 requires-dist = [
     { name = "build", marker = "extra == 'dev'", specifier = ">=1.0.0" },
-    { name = "chuk-mcp-math", specifier = ">=0.1.0" },
+    { name = "chuk-mcp-math", specifier = ">=0.1.2" },
     { name = "chuk-mcp-math-server", extras = ["dev"], marker = "extra == 'full'" },
-    { name = "chuk-mcp-server", specifier = ">=0.7.5" },
+    { name = "chuk-mcp-server", specifier = ">=0.15" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },

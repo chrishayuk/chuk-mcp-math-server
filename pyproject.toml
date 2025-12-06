@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chuk-mcp-math-server"
-version = "0.2.0"
+version = "0.2.1"
 description = "Configurable mathematical computation server for MCP protocol"
 readme = "README.md"
 license = "MIT"
@@ -67,14 +67,6 @@ Homepage = "https://github.com/chuk-mcp/chuk-mcp-math-server"
 Documentation = "https://github.com/chuk-mcp/chuk-mcp-math-server/blob/main/README.md"
 Repository = "https://github.com/chuk-mcp/chuk-mcp-math-server.git"
 Issues = "https://github.com/chuk-mcp/chuk-mcp-math-server/issues"
-
-# Setuptools configuration
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["chuk_mcp_math_server*"]
 
 # Development tool configurations
 [tool.ruff]
@@ -150,12 +142,6 @@ python_classes = "Test*"
 python_functions = "test_*"
 addopts = "-v --tb=short"
 asyncio_mode = "auto"
-
-# Environment variables for testing
-env = [
-    "MCP_MATH_LOG_LEVEL=DEBUG",
-    "MCP_MATH_TRANSPORT=stdio"
-]
 
 # Dependency overrides for compatibility
 [tool.uv]
