@@ -13,13 +13,13 @@ A highly configurable **Mathematical Computation Protocol (MCP) server** that pr
 
 - **36,000+ RPS** peak throughput (inherited from chuk-mcp-server)
 - **Sub-3ms latency** per tool call
-- **393 Mathematical Functions** available
+- **475 Mathematical Functions** available
 - **Zero-config startup** - works out of the box
 
 ## ✨ Features
 
 ### 🔢 Mathematical Capabilities
-- **393 Mathematical Functions** across multiple domains
+- **475 Mathematical Functions** across multiple domains
 - **Number Theory**: Prime testing, factorization, GCD, LCM, sequences (71 functions)
 - **Arithmetic**: Basic operations, advanced calculations, statistics (322 functions)
 - **Trigonometry**: Comprehensive trigonometric operations (71 functions)
@@ -90,7 +90,7 @@ pip install chuk-mcp-math-server
 # Start server with STDIO transport (default)
 uv run chuk-mcp-math-server
 
-# Starts immediately with all 393 functions available
+# Starts immediately with all 475 functions available
 ```
 
 #### HTTP Transport (Web APIs)
@@ -190,7 +190,7 @@ curl http://localhost:8000/mcp \
 
 ### Available Functions
 
-The server provides **393 mathematical functions** across these domains:
+The server provides **475 mathematical functions** across these domains:
 
 | Domain | Functions | Examples |
 |--------|-----------|----------|
@@ -496,7 +496,7 @@ This will automatically:
 ### Benchmarks
 - **Peak Throughput**: 36,000+ requests/second
 - **Average Latency**: <3ms per tool call
-- **Startup Time**: ~2 seconds (393 functions loaded)
+- **Startup Time**: ~2 seconds (475 functions loaded)
 - **Memory Usage**: ~50MB baseline
 - **Success Rate**: 100% under load testing
 
@@ -558,7 +558,7 @@ A free public math server is available at **https://math.chukai.io/mcp** for any
 ### Features
 - ✅ **Always Available**: Hosted on Fly.io with auto-scaling
 - ✅ **Always Up-to-Date**: Automatically deploys from main branch
-- ✅ **All 393 Functions**: Full mathematical function library
+- ✅ **All 475 Functions**: Full mathematical function library
 - ✅ **No Installation Required**: Just add to Claude Desktop config
 - ✅ **Free to Use**: No authentication or API keys needed
 
@@ -651,7 +651,7 @@ We welcome contributions! Here's how to help:
 
 Built on **chuk-mcp-server** framework:
 - **chuk-mcp-server**: High-performance MCP server framework (36K+ RPS)
-- **chuk-mcp-math**: Mathematical function library (393 functions)
+- **chuk-mcp-math**: Mathematical function library (475 functions)
 - **This server**: Bridges the two with filtering and configuration
 
 The refactored architecture is simpler and more performant:
