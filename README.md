@@ -107,7 +107,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 
 #### Option 1: Use the Public Server (Easiest)
 
-Connect to the hosted public server at `math.chukai.io`:
+Connect to the hosted public server:
 
 ```json
 {
@@ -584,25 +584,19 @@ Then restart Claude Desktop and ask: "Can you check if 97 is prime?"
 
 ### Testing the Public Server
 
+The server requires session management for MCP over HTTP. Use `chuk-mcp-client` to connect:
+
 ```bash
-# List available tools
+# Install the client
+uvx chuk-mcp-client https://math.chukai.io/mcp
+
+# Or test with curl (requires session ID from chuk-mcp-server)
 curl https://math.chukai.io/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
-
-# Call a function
-curl https://math.chukai.io/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc":"2.0",
-    "id":2,
-    "method":"tools/call",
-    "params":{
-      "name":"is_prime",
-      "arguments":{"n":97}
-    }
-  }'
 ```
+
+**Note**: The server uses chuk-mcp-server's session-based HTTP transport, which requires the `chuk-mcp-client` for proper session management.
 
 ### Privacy & Usage
 
