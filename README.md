@@ -13,16 +13,25 @@ A highly configurable **Mathematical Computation Protocol (MCP) server** that pr
 
 - **36,000+ RPS** peak throughput (inherited from chuk-mcp-server)
 - **Sub-3ms latency** per tool call
-- **475 Mathematical Functions** available
+- **642 Mathematical Functions** available
 - **Zero-config startup** - works out of the box
 
 ## ✨ Features
 
 ### 🔢 Mathematical Capabilities
-- **475 Mathematical Functions** across multiple domains
-- **Number Theory**: Prime testing, factorization, GCD, LCM, sequences (71 functions)
-- **Arithmetic**: Basic operations, advanced calculations, statistics (322 functions)
+- **642 Mathematical Functions** across multiple domains
+- **Number Theory**: Prime testing, factorization, GCD, LCM, sequences (328 functions)
+- **Arithmetic**: Basic operations, advanced calculations (44 functions)
 - **Trigonometry**: Comprehensive trigonometric operations (71 functions)
+- **Linear Algebra**: Vector and matrix operations (33 functions)
+- **Statistics**: Descriptive and inferential statistics (15 functions)
+- **Calculus**: Derivatives, integration, root finding (9 functions)
+- **Geometry**: Shapes, distances, intersections (12 functions)
+- **Probability**: Distribution functions (10 functions)
+- **Advanced Operations**: Complex mathematical operations (22 functions)
+- **Sequences**: Mathematical sequences (12 functions)
+- **Constants**: Mathematical constants (25 functions)
+- **Conversions**: Unit and type conversions (7 functions)
 - **Real-time Computation**: Async processing with proper error handling
 - **Function Filtering**: Configurable allowlists and denylists by domain, category, or function
 
@@ -90,7 +99,7 @@ pip install chuk-mcp-math-server
 # Start server with STDIO transport (default)
 uv run chuk-mcp-math-server
 
-# Starts immediately with all 475 functions available
+# Starts immediately with all 642 functions available
 ```
 
 #### HTTP Transport (Web APIs)
@@ -190,13 +199,18 @@ curl http://localhost:8000/mcp \
 
 ### Available Functions
 
-The server provides **475 mathematical functions** across these domains:
+The server provides **642 mathematical functions** across these domains:
 
 | Domain | Functions | Examples |
 |--------|-----------|----------|
-| **Arithmetic** (322) | Basic operations, comparisons, rounding, modular arithmetic | `add`, `multiply`, `modulo`, `gcd`, `lcm` |
-| **Trigonometry** (71) | Trig functions, conversions, identities | `sin`, `cos`, `tan`, `radians`, `degrees` |
-| **Number Theory** | Primes, sequences, special numbers | `is_prime`, `fibonacci`, `factorial`, `divisors` |
+| **Arithmetic & Number Theory** (420) | Basic operations, primes, sequences, divisibility | `add`, `multiply`, `modulo`, `is_prime`, `fibonacci`, `gcd` |
+| **Trigonometry** (71) | Trig functions, hyperbolic, conversions | `sin`, `cos`, `tan`, `sinh`, `radians_to_degrees` |
+| **Linear Algebra** (33) | Vector and matrix operations | `dot_product`, `cross_product`, `matrix_multiply` |
+| **Statistics** (15) | Descriptive statistics | `mean`, `median`, `std_dev`, `variance` |
+| **Calculus** (9) | Derivatives, integration, root finding | `derivative`, `integrate`, `newton_raphson` |
+| **Geometry** (12) | Shapes, distances, intersections | `circle_area`, `distance`, `triangle_area` |
+| **Probability** (10) | Distribution functions | `normal_pdf`, `binomial_pmf` |
+| **Other** (17) | Advanced operations, sequences, constants, conversions | `factorial`, `combinations`, `pi_digits` |
 
 ### Function Filtering
 
@@ -496,7 +510,7 @@ This will automatically:
 ### Benchmarks
 - **Peak Throughput**: 36,000+ requests/second
 - **Average Latency**: <3ms per tool call
-- **Startup Time**: ~2 seconds (475 functions loaded)
+- **Startup Time**: ~2 seconds (642 functions loaded)
 - **Memory Usage**: ~50MB baseline
 - **Success Rate**: 100% under load testing
 
@@ -558,7 +572,7 @@ A free public math server is available at **https://math.chukai.io/mcp** for any
 ### Features
 - ✅ **Always Available**: Hosted on Fly.io with auto-scaling
 - ✅ **Always Up-to-Date**: Automatically deploys from main branch
-- ✅ **All 475 Functions**: Full mathematical function library
+- ✅ **All 642 Functions**: Full mathematical function library
 - ✅ **No Installation Required**: Just add to Claude Desktop config
 - ✅ **Free to Use**: No authentication or API keys needed
 
@@ -651,7 +665,7 @@ We welcome contributions! Here's how to help:
 
 Built on **chuk-mcp-server** framework:
 - **chuk-mcp-server**: High-performance MCP server framework (36K+ RPS)
-- **chuk-mcp-math**: Mathematical function library (475 functions)
+- **chuk-mcp-math**: Mathematical function library (642 functions)
 - **This server**: Bridges the two with filtering and configuration
 
 The refactored architecture is simpler and more performant:

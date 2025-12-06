@@ -25,8 +25,8 @@ class TestMathServer:
         server = ConfigurableMCPMathServer(math_config)
         stats = server.get_function_stats()
 
-        assert stats["total_available"] == 475
-        assert stats["total_filtered"] == 475
+        assert stats["total_available"] == 642
+        assert stats["total_filtered"] == 642
         assert not stats["filtering_active"]
 
     def test_server_with_filtered_functions(self, filtered_config):
@@ -34,7 +34,7 @@ class TestMathServer:
         server = ConfigurableMCPMathServer(filtered_config)
         stats = server.get_function_stats()
 
-        assert stats["total_available"] == 475
+        assert stats["total_available"] == 642
         assert stats["total_filtered"] == 4
         assert stats["filtering_active"]
 
@@ -44,7 +44,7 @@ class TestMathServer:
         stats = server.get_function_stats()
 
         assert stats["total_filtered"] > 0
-        assert stats["total_filtered"] < 475
+        assert stats["total_filtered"] < 642
         assert stats["filtering_active"]
         assert "arithmetic" in stats["domains_filtered"]
         assert "trigonometry" not in stats["domains_filtered"]
@@ -76,7 +76,7 @@ class TestMathServer:
         stats1 = server1.get_function_stats()
         stats2 = server2.get_function_stats()
 
-        assert stats1["total_filtered"] == 475
+        assert stats1["total_filtered"] == 642
         assert stats2["total_filtered"] == 4
 
 

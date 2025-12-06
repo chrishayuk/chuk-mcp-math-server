@@ -15,7 +15,7 @@ class TestFunctionFilter:
         functions = filter.get_filtered_functions()
 
         assert len(functions) > 0, "Should load mathematical functions"
-        assert len(functions) == 475, f"Expected 475 functions, got {len(functions)}"
+        assert len(functions) == 642, f"Expected 642 functions, got {len(functions)}"
 
     def test_function_allowlist(self, filtered_config):
         """Test function allowlist filtering."""
@@ -90,8 +90,8 @@ class TestFunctionFilter:
         assert "filtering_active" in stats
         assert "domains_filtered" in stats
 
-        assert stats["total_available"] == 475
-        assert stats["total_filtered"] == 475
+        assert stats["total_available"] == 642
+        assert stats["total_filtered"] == 642
         assert not stats["filtering_active"]
 
     def test_function_stats_with_filtering(self, filtered_config):
@@ -99,7 +99,7 @@ class TestFunctionFilter:
         filter = FunctionFilter(filtered_config)
         stats = filter.get_function_stats()
 
-        assert stats["total_available"] == 475
+        assert stats["total_available"] == 642
         assert stats["total_filtered"] == 4
         assert stats["filtering_active"]
 

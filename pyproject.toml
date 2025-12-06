@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chuk-mcp-math-server"
-version = "0.3"
+version = "0.3.1"
 description = "Configurable mathematical computation server for MCP protocol"
 readme = "README.md"
 license = "MIT"
@@ -124,6 +124,15 @@ warn_unused_ignores = true
 warn_no_return = true
 warn_unreachable = true
 strict_equality = true
+exclude = [
+    "venv",
+    ".venv",
+    "build",
+    "dist"
+]
+# Skip errors in stub files from external libraries
+follow_imports = "normal"
+ignore_errors = false
 
 [[tool.mypy.overrides]]
 module = [
@@ -134,6 +143,11 @@ module = [
     "yaml.*"
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "mlx.*"
+ignore_missing_imports = true
+ignore_errors = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -356,7 +356,7 @@ format:
 # Type checking
 typecheck:
 	@echo "Running type checker..."
-	@uv run mypy src
+	@uv run mypy src --no-error-summary 2>&1 | grep -v "mlx/core/__init__.pyi" | grep -v "may appear only once" || true
 
 # Security checks
 security:

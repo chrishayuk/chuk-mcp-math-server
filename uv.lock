@@ -202,7 +202,7 @@ wheels = [
 
 [[package]]
 name = "chuk-mcp-math-server"
-version = "0.3"
+version = "0.3.1"
 source = { editable = "." }
 dependencies = [
     { name = "chuk-mcp-math" },
