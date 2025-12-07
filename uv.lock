@@ -202,7 +202,7 @@ wheels = [
 
 [[package]]
 name = "chuk-mcp-math-server"
-version = "0.3.2"
+version = "0.3.3"
 source = { editable = "." }
 dependencies = [
     { name = "chuk-mcp-math" },
@@ -236,7 +236,7 @@ requires-dist = [
     { name = "build", marker = "extra == 'dev'", specifier = ">=1.0.0" },
     { name = "chuk-mcp-math", specifier = ">=0.2.3" },
     { name = "chuk-mcp-math-server", extras = ["dev"], marker = "extra == 'full'" },
-    { name = "chuk-mcp-server", specifier = ">=0.15" },
+    { name = "chuk-mcp-server", specifier = ">=0.15.1" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
@@ -250,7 +250,7 @@ provides-extras = ["dev", "full"]
 
 [[package]]
 name = "chuk-mcp-server"
-version = "0.15"
+version = "0.15.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "chuk-mcp" },
@@ -266,9 +266,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "uvloop", marker = "sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5e/39/9a566d56e024af4c8b39270b4adccfcbb45851a8589da58bcae4dd7daab9/chuk_mcp_server-0.15.tar.gz", hash = "sha256:dbf2e2cc9fc8918d23876231bca089aaa6409bbdf41048ae4c4cd249a11d9dc3", size = 521172, upload-time = "2025-12-05T18:29:22.874Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/15/00/3156122557c23f97533b9172792f884f53b1095de6a70bbd6f17f152e340/chuk_mcp_server-0.15.1.tar.gz", hash = "sha256:b6cf69f07c63e6ce5ed7bcdbd521f139f80758e7ded4cc689caa793b3b8a4c7b", size = 538149, upload-time = "2025-12-07T00:45:07.102Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/03/b2/7f99344522e779975bf7f28aa756462890c6d7f8b91fbdfe31241947944b/chuk_mcp_server-0.15-py3-none-any.whl", hash = "sha256:c17c1b1e01f50c5a6baab8401b9b20ace9b89ab7a1226bf3211e83981d87b2c4", size = 140875, upload-time = "2025-12-05T18:29:21.304Z" },
+    { url = "https://files.pythonhosted.org/packages/99/a6/cf227b20d4c5b2344f0e58ee185db0776e38c3e4c4e2f97b31e2dd7bcce2/chuk_mcp_server-0.15.1-py3-none-any.whl", hash = "sha256:96f9355d41d4cd406a894cac966f27e61fca91eedea2a741be5169f1fbe3d421", size = 141102, upload-time = "2025-12-07T00:45:05.713Z" },
 ]
 
 [[package]]
