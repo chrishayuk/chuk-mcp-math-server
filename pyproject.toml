@@ -4,14 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chuk-mcp-math-server"
-version = "0.3.3"
+version = "0.3.4"
 description = "Configurable mathematical computation server for MCP protocol"
 readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
-authors = [
-    {name = "Chuk AI Team", email = "chrishayuk@somejunkmailbox.com"}
-]
+license = {text = "Apache-2.0"}
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -151,6 +147,7 @@ ignore_errors = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"

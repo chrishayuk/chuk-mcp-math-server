@@ -97,7 +97,7 @@ class ConfigurableMCPMathServer:
         server = self
 
         # Available functions list resource
-        @self.mcp_server.resource(  # type: ignore[untyped-decorator]
+        @self.mcp_server.resource(  # type: ignore[misc]
             "math://available-functions",
             name="Available Functions",
             description="List of currently available mathematical functions after filtering",
@@ -134,7 +134,7 @@ class ConfigurableMCPMathServer:
             )
 
         # Function statistics resource
-        @self.mcp_server.resource(  # type: ignore[untyped-decorator]
+        @self.mcp_server.resource(  # type: ignore[misc]
             "math://function-stats",
             name="Function Statistics",
             description="Statistics about function filtering and availability",
@@ -145,7 +145,7 @@ class ConfigurableMCPMathServer:
             return json.dumps(stats, indent=2)
 
         # Server configuration resource
-        @self.mcp_server.resource(  # type: ignore[untyped-decorator]
+        @self.mcp_server.resource(  # type: ignore[misc]
             "math://server-config",
             name="Server Configuration",
             description="Current server configuration",

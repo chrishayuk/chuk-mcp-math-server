@@ -4,10 +4,9 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://github.com/chuk-mcp/chuk-mcp-math-server/workflows/Test/badge.svg)](https://github.com/chuk-mcp/chuk-mcp-math-server/actions)
 [![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen)](https://github.com/chuk-mcp/chuk-mcp-math-server)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Powered by chuk-mcp-server](https://img.shields.io/badge/powered%20by-chuk--mcp--server-blue)](https://github.com/chrishayuk/chuk-mcp-server)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A highly configurable **Mathematical Computation Protocol (MCP) server** that provides comprehensive mathematical functions with flexible transport options. Built on the high-performance [chuk-mcp-server](https://github.com/chrishayuk/chuk-mcp-server) framework.
+A highly configurable **Mathematical Computation Protocol (MCP) server** that provides comprehensive mathematical functions with flexible transport options. Built on the high-performance chuk-mcp-server framework.
 
 ## ⚡ Performance
 
@@ -676,23 +675,21 @@ The refactored architecture is simpler and more performant:
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Built on [chuk-mcp-server](https://github.com/chrishayuk/chuk-mcp-server) - High-performance MCP framework
+- Built on chuk-mcp-server - High-performance MCP framework
 - Mathematical functions from [chuk-mcp-math](https://github.com/chuk-mcp/chuk-mcp-math)
 - Follows the [Model Context Protocol](https://modelcontextprotocol.io) specification
 
 ## 🔗 Links
 
-- **chuk-mcp-server**: [GitHub](https://github.com/chrishayuk/chuk-mcp-server) | [Docs](https://github.com/chrishayuk/chuk-mcp-server#readme)
+- **chuk-mcp-server**: High-performance MCP framework
 - **chuk-mcp-math**: [GitHub](https://github.com/chuk-mcp/chuk-mcp-math)
 - **MCP Protocol**: [Official Specification](https://modelcontextprotocol.io)
 - **Issues**: [GitHub Issues](https://github.com/chuk-mcp/chuk-mcp-math-server/issues)
 
 ---
-
-**Made with ❤️ by the Chuk MCP Team**
 
 *High-performance mathematical computation for the Model Context Protocol ecosystem*
